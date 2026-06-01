@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --felt: #1a3a2a;
+  --felt-dark: #0f2318;
+  --felt-light: #2a5040;
+  --felt-border: #3a6a50;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dark: #a07830;
+  --chip-red: #e53e3e;
+  --chip-blue: #3182ce;
+  --chip-green: #38a169;
+  --active-glow: rgba(201, 168, 76, 0.6);
+  --card-bg: #fefce8;
+  --shadow-card: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0f0e;
+  overflow: hidden;
+}
+
+/* Felt table texture */
+.felt-table {
+  background: var(--felt);
+  background-image: 
+    radial-gradient(ellipse 60% 40% at 50% 50%, var(--felt-light) 0%, var(--felt) 60%, var(--felt-dark) 100%);
+  border: 4px solid var(--felt-border);
+  box-shadow: 
+    inset 0 2px 40px rgba(0,0,0,0.4),
+    0 0 60px rgba(0,0,0,0.6);
+}
+
+/* Card styles */
+.playing-card {
+  background: var(--card-bg);
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+  user-select: none;
+}
+
+.playing-card:hover { transform: translateY(-4px); }
+
+.card-red { color: #dc2626; }
+.card-black { color: #111827; }
+.card-back {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 4px,
+    rgba(255,255,255,0.05) 4px,
+    rgba(255,255,255,0.05) 8px
+  );
+  border: 2px solid rgba(255,255,255,0.15);
+}
+
+/* Active player glow animation */
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 var(--active-glow); }
+  50% { box-shadow: 0 0 0 12px transparent; }
+}
+
+.active-turn {
+  animation: pulseGold 1.2s ease-in-out infinite;
+  border-color: var(--gold) !important;
+}
+
+/* Chip stack visualization */
+.chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Event log scrollbar */
+.event-log::-webkit-scrollbar { width: 4px; }
+.event-log::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.event-log::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 2px; }
+
+/* Seat position helper classes for oval layout */
+.seat-0  { grid-area: s0; }
+.seat-1  { grid-area: s1; }
+.seat-2  { grid-area: s2; }
+.seat-3  { grid-area: s3; }
+.seat-4  { grid-area: s4; }
+.seat-5  { grid-area: s5; }
+.seat-6  { grid-area: s6; }
+.seat-7  { grid-area: s7; }
+.seat-8  { grid-area: s8; }
+
+/* Gold text */
+.text-gold { color: var(--gold); }
+.text-gold-light { color: var(--gold-light); }
+
+/* Button styles */
+.btn-action {
+  @apply px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-150;
+  @apply border-2 border-transparent;
+  @apply active:scale-95;
+}
+
+.btn-fold {
+  @apply btn-action bg-red-900/80 hover:bg-red-700 border-red-700 text-red-100;
+}
+
+.btn-check {
+  @apply btn-action bg-gray-700/80 hover:bg-gray-600 border-gray-600 text-gray-100;
+}
+
+.btn-call {
+  @apply btn-action bg-blue-900/80 hover:bg-blue-700 border-blue-700 text-blue-100;
+}
+
+.btn-raise {
+  @apply btn-action bg-amber-900/80 hover:bg-amber-700 border-amber-700 text-amber-100;
+}
+
+.btn-allin {
+  @apply btn-action bg-gradient-to-r from-red-700 to-orange-600 hover:from-red-600 hover:to-orange-500;
+  @apply border-orange-500 text-white font-bold;
+  @apply shadow-lg shadow-orange-900/50;
+}
+
+/* Dealer button */
+.dealer-btn {
+  width: 22px;
+  height: 22px;
+  background: #f9df6a;
+  border: 2px solid #b8860b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  color: #5a4000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Blind indicator badges */
+.blind-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.sb-badge { background: #1e40af; color: #93c5fd; }
+.bb-badge { background: #065f46; color: #6ee7b7; }
+
+/* Video placeholder ring */
+.video-ring {
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255,255,255,0.15);
+  transition: border-color 0.2s;
+}
+
+.video-ring.is-active { border-color: var(--gold); }
+.video-ring.is-folded { opacity: 0.4; filter: grayscale(1); }
+.video-ring.is-allin  { border-color: #ef4444; }
+
+/* Pot/chips counter */
+.chip-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: -0.3px;
+}
+
+/* Entrance animation */
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* Card deal animation */
+@keyframes dealCard {
+  from { transform: translateY(-40px) rotate(-5deg) scale(0.8); opacity: 0; }
+  to   { transform: translateY(0) rotate(0deg) scale(1);       opacity: 1; }
+}
+
+.card-deal { animation: dealCard 0.25s ease-out forwards; }

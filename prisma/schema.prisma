@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id        String   @id @default(uuid())
+  nickname  String
+  sessionId String   @unique
+  createdAt DateTime @default(now())
+  
+  roomPlayers RoomPlayer[]
+  actions     HandAction[]
+  handResults HandResult[]
+}
+
+model Room {
+  id          String     @id @default(uuid())
+  code        String     @unique  // Short invite code e.g. "WOLF42"
+  hostId      String
+  name        String
+  gameVariant String     @default("TEXAS_HOLDEM")
+  
+  // Config
+  startingStack   Int @default(50)
+  smallBlind      Int @default(1)
+  bigBlind        Int @default(2)
+  maxPlayers      Int @default(9)
+  videoEnabled    Boolean @default(true)
+  houseRulesEnabled Boolean @default(false)
+  
+  status      String   @default("LOBBY")  // LOBBY | ACTIVE | PAUSED | ENDED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  players     RoomPlayer[]
+  hands       Hand[]
+}
+
+model RoomPlayer {
+  id          String  @id @default(uuid())
+  roomId      String
+  playerId    String
+  seatNumber  Int?    // 0-8, null = spectator
+  chipStack   Int     @default(0)
+  totalBought Int     @default(0)
+  status      String  @default("WAITING") // WAITING | ACTIVE | SITTING_OUT | ELIMINATED
+  isHost      Boolean @default(false)
+  joinedAt    DateTime @default(now())
+  
+  room   Room   @relation(fields: [roomId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+  
+  @@unique([roomId, playerId])
+  @@unique([roomId, seatNumber])
+}
+
+model Hand {
+  id           String   @id @default(uuid())
+  roomId       String
+  handNumber   Int
+  gameVariant  String   @default("TEXAS_HOLDEM")
+  dealerSeat   Int
+  smallBlindSeat Int
+  bigBlindSeat   Int
+  communityCards String  // JSON array of card strings
+  potSize      Int
+  finalPot     Int      @default(0)
+  status       String   @default("ACTIVE") // ACTIVE | SHOWDOWN | COMPLETE
+  startedAt    DateTime @default(now())
+  completedAt  DateTime?
+  
+  room    Room   @relation(fields: [roomId], references: [id])
+  actions HandAction[]
+  results HandResult[]
+}
+
+model HandAction {
+  id         String   @id @default(uuid())
+  handId     String
+  playerId   String
+  street     String   // PREFLOP | FLOP | TURN | RIVER | CHAP
+  actionType String   // FOLD | CHECK | CALL | BET | RAISE | ALL_IN | POST_SB | POST_BB
+  amount     Int      @default(0)
+  timestamp  DateTime @default(now())
+  
+  hand   Hand   @relation(fields: [handId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+}
+
+model HandResult {
+  id          String @id @default(uuid())
+  handId      String
+  playerId    String
+  seatNumber  Int
+  holeCards   String  // JSON
+  handRank    String?
+  handDesc    String?
+  amountWon   Int     @default(0)
+  isWinner    Boolean @default(false)
+  showedCards Boolean @default(false)
+  
+  hand   Hand   @relation(fields: [handId], references: [id])
+  player Player @relation(fields: [playerId], references: [id])
+}
