@@ -45,7 +45,7 @@ export function createSocketServer(httpServer: HttpServer): SocketIOServer {
       methods: ['GET', 'POST'],
     },
     path: '/api/socket',
-    transports: ['websocket', 'polling'],
+    transports: ['polling'],
   })
 
   io.on('connection', (socket: Socket) => {

@@ -13,7 +13,7 @@ export function useSocket() {
     if (!sharedSocket || !sharedSocket.connected) {
       sharedSocket = io(window.location.origin, {
         path: '/api/socket',
-        transports: ['websocket', 'polling'],
+        transports: ['polling'],
       })
     }
 
