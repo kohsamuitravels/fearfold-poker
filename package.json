@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.ts",
+    "dev": "npx tsx server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production node server.ts",
+    "start": "NODE_ENV=production npx tsx server.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:push": "prisma db push",
