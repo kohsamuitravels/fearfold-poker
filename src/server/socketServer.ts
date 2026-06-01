@@ -41,9 +41,11 @@ const codeToRoom = new Map<string, string>()
 export function createSocketServer(httpServer: HttpServer): SocketIOServer {
   const io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.NODE_ENV === 'production' ? false : ['http://localhost:3000'],
+      origin: '*',
       methods: ['GET', 'POST'],
     },
+    path: '/api/socket',
+    transports: ['websocket', 'polling'],
   })
 
   io.on('connection', (socket: Socket) => {
